@@ -1,0 +1,45 @@
+uniapp 页面传递多个参数：
+uni.navigateTo({url: '/pages/appstore/xxxx/xxxx?传递参数1key='+参数1值+'&传递参数2key='+参数2值});
+
+下面我们来重点介绍下跳转传值的方法
+1、给点击事件传入id
+<view @tap="toOpportnity(item.id)">转商机</view>；
+
+2、Methods中写方法
+
+toOpportnity(id){
+uni.navigateTo({        //点击跳转的方法
+url:'opportunity-form?id='+id     //需要跳转的页面路径，使用问号进行id的传值，然后再拼接一个要传入的id
+//对象传参方式 url:'../../pages/disabled/subsidie?listObj=' + encodeURIComponent(JSON.stringify(obj))
+})
+}
+
+3、详情页接收参数
+
+写一个onLoad函数
+onLoad(options){    //传入的参数名称，可自行修改
+// console.log(options);    查看传入的id值
+ 
+对象传参的接收方法
+//this.leadobj(上个页面传过来的对象名称，即？后面的那个名称) = JSON.parse(decodeURIComponent(options.leadobj));   
+}
+
+单个参数的接收，这里使用id来进行介绍
+首先要把传递过来的id进行赋值
+请求接口，接口的url地址后面要加上传递过来的id【/${this.id}/】
+完整步骤如下：
+onLoad(options){
+this.id = options.id;
+console.log('传过来的id值为：' + options.id);
+let that = this
+uni.request({
+url:`${this.$serverUrl}/opportunity/${this.id}/`,
+header:{
+'Authorization': this.uerInfo.token
+},
+success(res){
+console.log(res)
+that.opportunity = res.data;
+}
+})
+}
